@@ -1,0 +1,115 @@
+/* General Styles */
+body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: #121212;
+    color: #e0e0e0;
+  }
+  
+  /* Page Container */
+  .page-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: auto;
+  }
+  
+  /* Header */
+  .header {
+    text-align: center;
+    background-color: #1f1f1f;
+    color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    margin-bottom: 20px;
+  }
+  
+  /* Main Content Grid */
+  .main-content {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  }
+  
+  /* Card Style */
+  .card {
+    background-color: #1e1e1e;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.9);
+  }
+  
+  /* Card Heading */
+  .card h2 {
+    font-size: 1.8rem;
+    border-bottom: 2px solid #03dac5;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+    color: #ffffff;
+  }
+  
+  /* Lists */
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  ul li {
+    margin: 10px 0;
+    font-size: 1rem;
+    color: #bdbdbd;
+  }
+  
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    color: #ffffff;
+  }
+  
+  table th,
+  table td {
+    border: 1px solid #424242;
+    padding: 10px;
+    text-align: left;
+    font-size: 0.95rem;
+  }
+  
+  table th {
+    background-color: #2c2c2c;
+    color: #ffffff;
+  }
+  
+  table tbody tr:nth-child(even) {
+    background-color: #1c1c1c;
+  }
+  
+  table tbody tr:hover {
+    background-color: #333333;
+    transition: background-color 0.2s ease;
+  }
+  
+  /* Button (Optional) */
+  button {
+    background-color: #03dac5;
+    color: #121212;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #00c4a7;
+  }
+  

@@ -1,8 +1,11 @@
 "use client";
 import React, { useState } from "react";
 import "./Login.css"; // Import the CSS file
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 const Login = () => {
+  const router = useRouter();
   const [isSignUp, setIsSignUp] = useState(false);
 
   const handleSignUp = () => {
@@ -12,6 +15,11 @@ const Login = () => {
   const handleSignIn = () => {
     setIsSignUp(false);
   };
+
+  const handleSubmitSignin = () => {
+    Cookies.set('islogedin', true, {expires : 1});
+    router.replace("/dashboard")
+  }
 
   return (
     <div className={`container ${isSignUp ? "right-panel-active" : ""}`}>
@@ -40,7 +48,7 @@ const Login = () => {
 
       {/* Sign In Form */}
       <div className="form-container sign-in-container">
-        <form action="#">
+        <form action={handleSubmitSignin}>
           <h1>Sign in</h1>
           <div className="social-container">
             <a href="#" className="social">

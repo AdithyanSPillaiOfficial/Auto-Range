@@ -9,7 +9,7 @@ const Popup = ({ isOpen, closeModal, children }) => {
     <div className="modal-overlay" onClick={closeModal}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         {children}
-        <button onClick={closeModal}>Close</button>
+        <button onClick={closeModal}>Close X</button>
       </div>
     </div>
   );

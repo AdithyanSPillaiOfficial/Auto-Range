@@ -95,7 +95,7 @@
 
 import React, { useState } from "react";
 
-const Page = () => {
+const Page = (props) => {
   const [trips, setTrips] = useState([]);
   const [fuelFills, setFuelFills] = useState([]);
   const [isTripModalOpen, setTripModalOpen] = useState(false);

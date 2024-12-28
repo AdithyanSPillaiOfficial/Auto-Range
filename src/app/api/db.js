@@ -1,4 +1,4 @@
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 require('dotenv').config();
 
 
@@ -70,9 +70,15 @@ const getAllObjects = async () => {
 
 const getUserWithSession = async (sessionId) => {
     try {
-        const user = fetchObjectsByParam("_id", sessionId, "sessions");
-        return user
+        //const user = fetchObjectsByParam("_id", sessionId, "sessions");
+        await connectToDatabase();
+        const collection = db.collection("sessions");
+        const filteredObjects = await collection.find({ _id : new ObjectId(sessionId) }).toArray();
+        const userCollection = db.collection("users");
+        const user = await userCollection.find({_id : new ObjectId(filteredObjects[0].userkey)}).toArray();
+        return user[0];
     } catch (error) {
+        console.log(error);
         return false;     
     }
 }

@@ -8,6 +8,10 @@ const Login = () => {
   const router = useRouter();
   const [isSignUp, setIsSignUp] = useState(false);
 
+  const [email, setEmail] = useState('');
+  const [password,setPassword] = useState('');
+  const [name, setName] = useState('');
+
   const handleSignUp = () => {
     setIsSignUp(true);
   };
@@ -16,16 +20,66 @@ const Login = () => {
     setIsSignUp(false);
   };
 
-  const handleSubmitSignin = () => {
-    Cookies.set('islogedin', true, {expires : 1});
-    router.replace("/dashboard")
+  const handleSubmitSignin = async () => {
+    try {
+      const result = await fetch('/api/login', {
+        method : 'POST',
+        headers : {
+          'Content-Type' : 'application/json'
+        },
+        body : JSON.stringify({
+          email : email,
+          password : password
+        })
+      });
+      if(result.ok) {
+        const res = await result.json();
+        if(res.status) {
+          Cookies.set('islogedin', true, {expires : 1});
+          Cookies.set('sessionid', res.userkey, {expires : 1});
+          router.replace("/dashboard")
+        }
+        else alert('Login Failed')
+      }
+    } catch (error) {
+      console.log(error);
+      alert("Error occured");
+    }
+    
+  };
+
+  const handleSubmitSignup = async () => {
+    try {
+      const result = await fetch('/api/signup', {
+        method : 'POST',
+        headers : {
+          'Content-Type' : 'application/json'
+        },
+        body : JSON.stringify({
+          name : name,
+          email : email,
+          password : password
+        })
+      });
+      if(result.ok) {
+        const res = await result.json();
+        if(res.status) {
+          alert("Sucess, Please Login")
+          document.location.reload();
+        }
+        else alert('Login Failed')
+      }
+    } catch (error) {
+      console.log(error);
+      alert("Error occured");
+    }
   }
 
   return (
     <div className={`container ${isSignUp ? "right-panel-active" : ""}`}>
       {/* Sign Up Form */}
       <div className="form-container sign-up-container">
-        <form action="#">
+        <form action={handleSubmitSignup}>
           <h1>Create Account</h1>
           <div className="social-container">
             <a href="#" className="social">
@@ -39,9 +93,9 @@ const Login = () => {
             </a>
           </div>
           <span>or use your email for registration</span>
-          <input type="text" placeholder="Name" />
-          <input type="email" placeholder="Email" />
-          <input type="password" placeholder="Password" />
+          <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} required />
+          <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required/>
           <button>Sign Up</button>
         </form>
       </div>
@@ -62,8 +116,8 @@ const Login = () => {
             </a>
           </div>
           <span>or use your account</span>
-          <input type="email" placeholder="Email" />
-          <input type="password" placeholder="Password" />
+          <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required/>
+          <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required/>
           <a href="#">Forgot your password?</a>
           <button>Sign In</button>
         </form>

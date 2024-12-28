@@ -14,7 +14,7 @@ function page() {
   }, []);
   
   return (
-    <div>
+    <div className='w-full h-full'>
         {isLogedin ? ( <Dashboard />) : null}
     </div>
   )

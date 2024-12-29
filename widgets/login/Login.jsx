@@ -36,7 +36,8 @@ const Login = () => {
         const res = await result.json();
         if(res.status) {
           Cookies.set('islogedin', true, {expires : 1});
-          Cookies.set('sessionid', res.userkey, {expires : 1});
+          Cookies.set('sessionid', res.sessionkey, {expires : 1});
+          Cookies.set('name', res.name, {expires : 1});
           router.replace("/dashboard")
         }
         else alert('Login Failed')

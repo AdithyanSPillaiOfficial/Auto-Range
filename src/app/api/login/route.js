@@ -16,7 +16,8 @@ export async function POST(request) {
         const sessionId = await addObject(sessionObj, "sessions");
         return NextResponse.json({
             status : true,
-            sessionkey : sessionId
+            sessionkey : sessionId,
+            name : result[0].name
         })
     }
     return NextResponse.json({

@@ -99,6 +99,7 @@ function Dashboard() {
 
     return (
         <div className='dashboard'>
+            <div className="text-4xl font-bold">👋 Welcome {Cookies.get('name')}</div>
             <div className='titlebar'>
                 <div className='heading'>Dashboard</div>
                 <div className="addvehicle" onClick={() => setAddvehpopup(true)} >Add Vehicle +</div>

@@ -100,7 +100,7 @@ const updateDocumentwithId = async (collectionName, documentId, parameter, value
 
         const result = await collection.updateOne(filter, update);
         console.log(result);
-        if(result > 0) {
+        if(result.modifiedCount > 0) {
             return true;
         }
         else {

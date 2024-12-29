@@ -5,10 +5,10 @@ export async function POST(request) {
     const req = await request.json();
     const user = await getUserWithSession(req.sessionid);
     console.log(user);
-    if (user.vehicles && user.vehicles.length > 0) {
+    if (user) {
         return NextResponse.json({
             status : true,
-            vehicles : user.vehicles
+            vehicles : user.vehicles ? user.vehicles : []
         })
     }
     else {

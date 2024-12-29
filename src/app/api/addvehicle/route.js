@@ -5,6 +5,9 @@ export async function POST(request) {
     const req = await request.json();
 
     const user = await getUserWithSession(req.sessionid);
+    if (!Array.isArray(user.vehicles)) {
+        user.vehicles = [];
+    }
     user.vehicles.push(req.vehicle);
     const updation = await updateDocumentwithId("users", user._id,"vehicles", user.vehicles);
     if(updation) {

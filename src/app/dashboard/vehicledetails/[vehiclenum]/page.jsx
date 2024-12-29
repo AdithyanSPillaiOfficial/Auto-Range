@@ -93,9 +93,10 @@
 
 // export default Page;
 
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 
-const Page = (props) => {
+const Page = ({params}) => {
+  params = use(params);
   const [trips, setTrips] = useState([]);
   const [fuelFills, setFuelFills] = useState([]);
   const [isTripModalOpen, setTripModalOpen] = useState(false);
@@ -231,7 +232,7 @@ const Page = (props) => {
       {/* Vehicle Info */}
       <section className="bg-gray-100 p-4 rounded shadow mb-4">
         <h2 className="text-lg font-semibold">Vehicle Information</h2>
-        <p>Register Number: KL-01-AB-1234</p>
+        <p>Register Number: {params.vehiclenum}</p>
         <p>Engine Number: ABC123XYZ</p>
         <p>Chassis Number: XYZ123ABC</p>
       </section>
@@ -313,8 +314,8 @@ const Page = (props) => {
 
       {/* Modals */}
       {isTripModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-4 rounded shadow w-96">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" onClick={()=> setTripModalOpen(false)}>
+          <div className="bg-white p-4 rounded shadow w-96" onClick={(e) => e.stopPropagation()} >
             <h3 className="text-lg font-semibold mb-2">Add Trip</h3>
             <input
               type="date"

@@ -1,4 +1,5 @@
 "use client";
+import Cookies from "js-cookie";
 // import React, { useState } from 'react';
 // import './vehiclepage.css';
 
@@ -93,7 +94,7 @@
 
 // export default Page;
 
-import React, { use, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 
 const Page = ({params}) => {
   params = use(params);
@@ -103,9 +104,9 @@ const Page = ({params}) => {
   const [isFuelModalOpen, setFuelModalOpen] = useState(false);
   const date = new Date();
   const today = date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
     day: 'numeric',
+    month: 'long',
+    year: 'numeric',
   });
 
   const [tripData, setTripData] = useState({
@@ -120,9 +121,43 @@ const Page = ({params}) => {
   const [fuelData, setFuelData] = useState({
     date: today,
     fuelAdded: "",
-    costPerLiter: "",
+    costPerLitre: "",
     totalCost: "",
   });
+
+  useEffect(() => {
+    fetch('/api/getvehicledetails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        sessionid: Cookies.get('sessionid'),
+        regno: params.vehiclenum
+      })
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Error occurred");
+        }
+      })
+      .then((res) => {
+        console.log(res);
+        if (res.status) {
+          console.log(res);
+          setTrips(res.vehicledetails.triphistory);
+          setFuelFills(res.vehicledetails.fuelhistory);
+          console.log("Trip Data")
+          console.log(trips)
+        }
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  }, [])
+  
 
   const handleTripChange = (e) => {
     const { name, value } = e.target;
@@ -150,7 +185,7 @@ const Page = ({params}) => {
     const numericValue = parseFloat(value) || 0; // Convert to a number, or default to 0
   
     setFuelData((prev) => {
-      let updatedFuelData = { ...prev, [name]: numericValue };
+      let updatedFuelData = { ...prev, [name]: value };
   
       // Calculate the missing field based on the other two
       console.log(name)
@@ -160,7 +195,7 @@ const Page = ({params}) => {
         console.log(updatedFuelData);
       } else if (name === "fuelAdded" && updatedFuelData.totalCost) {
         updatedFuelData.costPerLitre = (updatedFuelData.totalCost / numericValue).toFixed(2);
-        console.log(`cost per litre 1 : ${updatedFuelData.costPerLiter}`);
+        console.log(`cost per litre 1 : ${updatedFuelData.costPerLitre}`);
         console.log(updatedFuelData);
       } else if (name === "totalCost") {
         if (updatedFuelData.costPerLitre) {
@@ -176,7 +211,27 @@ const Page = ({params}) => {
     });
   };
 
-  const addTrip = () => {
+  const addTrip = async () => {
+    const responce = await fetch('/api/addtriphistory', {
+      method : 'POST',
+      headers : {
+        'Content-Type' : 'application/json'
+      },
+      body : JSON.stringify({
+        sessionid : Cookies.get('sessionid'),
+        regno : params.vehiclenum,
+        tripdata : tripData
+      })
+    });
+    if(responce.ok) {
+      const res = await responce.json();
+      if(!res.status) {
+        alert("Failed to add tripdata");
+      }
+    }
+    else {
+      alert("Error occured");
+    }
     setTrips((prev) => [...prev, tripData]);
     setTripData({
       date: "",
@@ -189,18 +244,39 @@ const Page = ({params}) => {
     setTripModalOpen(false);
   };
 
-  const addFuelFill = () => {
+  const addFuelFill = async () => {
+    console.log(fuelData);
+    const responce = await fetch('/api/addfuelhistory', {
+      method : 'POST',
+      headers : {
+        'Content-Type' : 'application/json'
+      },
+      body : JSON.stringify({
+        sessionid : Cookies.get('sessionid'),
+        regno : params.vehiclenum,
+        fueldata : fuelData
+      })
+    });
+    if(responce.ok) {
+      const res = await responce.json();
+      if(!res.status) {
+        alert("Failed to add Fueldata");
+      }
+    }
+    else {
+      alert("Error occured");
+    }
     setFuelFills((prev) => [...prev, fuelData]);
-    setFuelData({ date: "", fuelAdded: "", costPerLiter: "", totalCost: "" });
+    setFuelData({ date: "", fuelAdded: "", costPerLitre: "", totalCost: "" });
     setFuelModalOpen(false);
   };
 
   const calculateTotalDistance = () => {
-    return trips.reduce((acc, trip) => acc + parseFloat(trip.distance || 0), 0);
+    return trips?.reduce((acc, trip) => acc + parseFloat(trip.distance || 0), 0);
   };
 
   const calculateTotalFuel = () => {
-    return fuelFills.reduce((acc, fuel) => acc + parseFloat(fuel.fuelAdded || 0), 0);
+    return fuelFills?.reduce((acc, fuel) => acc + parseFloat(fuel?.fuelAdded || 0), 0);
   };
 
   const calculateFuelEfficiency = () => {
@@ -210,8 +286,8 @@ const Page = ({params}) => {
   };
 
   const calculateTotalCost = () => {
-    return fuelFills.reduce(
-      (acc, fuel) => acc + parseFloat(fuel.totalCost || 0),
+    return fuelFills?.reduce(
+      (acc, fuel) => acc + parseFloat(fuel?.totalCost || 0),
       0
     );
   };
@@ -267,7 +343,7 @@ const Page = ({params}) => {
             </tr>
           </thead>
           <tbody>
-            {trips.map((trip, index) => (
+            {trips?.map((trip, index) => (
               <tr key={index}>
                 <td className="border px-4 py-2">{trip.date}</td>
                 <td className="border px-4 py-2">{trip.startLocation}</td>
@@ -300,11 +376,11 @@ const Page = ({params}) => {
             </tr>
           </thead>
           <tbody>
-            {fuelFills.map((fuel, index) => (
+            {fuelFills?.map((fuel, index) => (
               <tr key={index}>
                 <td className="border px-4 py-2">{fuel.date}</td>
                 <td className="border px-4 py-2">{fuel.fuelAdded}</td>
-                <td className="border px-4 py-2">₹{fuel.costPerLiter}</td>
+                <td className="border px-4 py-2">₹{fuel.costPerLitre}</td>
                 <td className="border px-4 py-2">₹{fuel.totalCost}</td>
               </tr>
             ))}
@@ -320,7 +396,7 @@ const Page = ({params}) => {
             <input
               type="date"
               name="date"
-              value={tripData.date}
+              value={tripData?.date}
               onChange={handleTripChange}
               className="block w-full border px-2 py-1 mb-2"
             />
@@ -328,7 +404,7 @@ const Page = ({params}) => {
               type="text"
               name="startLocation"
               placeholder="Start Location"
-              value={tripData.startLocation}
+              value={tripData?.startLocation}
               onChange={handleTripChange}
               className="block w-full border px-2 py-1 mb-2"
             />
@@ -336,7 +412,7 @@ const Page = ({params}) => {
               type="text"
               name="endLocation"
               placeholder="End Location"
-              value={tripData.endLocation}
+              value={tripData?.endLocation}
               onChange={handleTripChange}
               className="block w-full border px-2 py-1 mb-2"
             />
@@ -344,7 +420,7 @@ const Page = ({params}) => {
               type="number"
               name="odometerStart"
               placeholder="Odometer Start"
-              value={tripData.odometerStart}
+              value={tripData?.odometerStart}
               onChange={handleTripChange}
               className="block w-full border px-2 py-1 mb-2"
             />
@@ -352,7 +428,7 @@ const Page = ({params}) => {
               type="number"
               name="odometerEnd"
               placeholder="Odometer End"
-              value={tripData.odometerEnd}
+              value={tripData?.odometerEnd}
               onChange={handleTripChange}
               className="block w-full border px-2 py-1 mb-2"
             />
@@ -360,7 +436,7 @@ const Page = ({params}) => {
               type="number"
               name="distance"
               placeholder="Distance"
-              value={tripData.distance}
+              value={tripData?.distance}
               onChange={handleTripChange}
               className="block w-full border px-2 py-1 mb-2"
             />
@@ -384,7 +460,7 @@ const Page = ({params}) => {
             <input
               type="date"
               name="date"
-              value={fuelData.date}
+              value={fuelData?.date}
               onChange={handleFuelChange}
               className="block w-full border px-2 py-1 mb-2"
             />
@@ -392,7 +468,7 @@ const Page = ({params}) => {
               type="number"
               name="fuelAdded"
               placeholder="Fuel Added"
-              value={fuelData.fuelAdded}
+              value={fuelData?.fuelAdded}
               onChange={handleFuelChange}
               className="block w-full border px-2 py-1 mb-2"
             />
@@ -400,7 +476,7 @@ const Page = ({params}) => {
               type="number"
               name="costPerLitre"
               placeholder="Cost per Liter"
-              value={fuelData.costPerLitre}
+              value={fuelData?.costPerLitre}
               onChange={handleFuelChange}
               className="block w-full border px-2 py-1 mb-2"
             />
@@ -408,7 +484,7 @@ const Page = ({params}) => {
               type="number"
               name="totalCost"
               placeholder="Total Cost"
-              value={fuelData.totalCost}
+              value={fuelData?.totalCost}
               onChange={handleFuelChange}
               className="block w-full border px-2 py-1 mb-2"
             />

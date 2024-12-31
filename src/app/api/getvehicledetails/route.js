@@ -8,6 +8,7 @@ export async function POST(request) {
     if(user.vehicles && user.vehicles.length > 0) {
         const filteredVehicles = user.vehicles.filter(vehicle => vehicle.regno === req.regno);
         if(filteredVehicles.length > 0) {
+            console.log(filteredVehicles[0]);
             return NextResponse.json({
                 status : true,
                 vehicledetails : filteredVehicles[0]

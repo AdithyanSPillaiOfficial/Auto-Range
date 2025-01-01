@@ -21,6 +21,7 @@ export async function POST(request) {
         })
     }
     return NextResponse.json({
-        status : false
+        status : false,
+        error : result.length != 1 ? "User Not Found" : "Password Mismatch"
     })
 }
